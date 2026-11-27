@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Planes de Trabajo</title>
+<meta name="description" content="Gestión de proyectos, tareas por colaborador y línea de tiempo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 16 16"><path d="M10.5 2.5l3 3L6 13H3v-3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 16 16"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-key" viewBox="0 0 16 16"><circle cx="5.5" cy="10.5" r="2.8" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7.5 8.5L13 3M11 5l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-team" viewBox="0 0 16 16"><circle cx="6" cy="5.5" r="2.3" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M1.8 13c.5-2.3 2.2-3.5 4.2-3.5s3.7 1.2 4.2 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="11.3" cy="6" r="1.8" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M11.5 9.6c1.5.1 2.5 1.1 2.8 2.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-x" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></symbol>
+</svg>
+
+<div class="loading" id="screenLoading">Cargando…</div>
+
+<!-- ============ Acceso ============ -->
+<section class="auth" id="screenAuth" hidden>
+  <div class="auth-card">
+    <div class="auth-head">
+      <div class="auth-gantt" aria-hidden="true">
+        <i style="width:46%;background:var(--st-done)"></i>
+        <i style="width:58%;margin-left:30%;background:var(--st-run)"></i>
+        <i style="width:30%;margin-left:62%;background:var(--st-pend)"></i>
+      </div>
+      <h1>Planes de Trabajo</h1>
+      <p id="authSubtitle">Inicia sesión para ver y gestionar los proyectos.</p>
+    </div>
+
+    <form id="formLogin" novalidate>
+      <div class="field"><label for="l-email">Correo</label><input class="f" type="email" id="l-email" autocomplete="username" required></div>
+      <div class="field"><label for="l-pass">Contraseña</label><input class="f" type="password" id="l-pass" autocomplete="current-password" required></div>
+      <p class="err" id="l-err"></p>
+      <button class="btn primary" type="submit" id="l-btn">Iniciar sesión</button>
+      <div class="auth-links"><button class="linkbtn" type="button" data-auth="signup">Crear cuenta</button><button class="linkbtn" type="button" data-auth="forgot">¿Olvidaste tu contraseña?</button></div>
+    </form>
+
+    <form id="formSignup" novalidate hidden>
+      <div class="field"><label for="s-name">Nombre completo</label><input class="f" id="s-name" autocomplete="name" maxlength="80" required></div>
+      <div class="field"><label for="s-email">Correo</label><input class="f" type="email" id="s-email" autocomplete="username" required></div>
+      <div class="field"><label for="s-pass">Contraseña (mínimo 8 caracteres)</label><input class="f" type="password" id="s-pass" autocomplete="new-password" minlength="8" required></div>
+      <p class="err" id="s-err"></p><p class="ok" id="s-ok"></p>
+      <button class="btn primary" type="submit" id="s-btn">Crear cuenta</button>
+      <p class="pcount" style="margin:0">La primera cuenta del sistema queda como administrador. Las siguientes necesitan la aprobación de un administrador.</p>
+      <div class="auth-links"><button class="linkbtn" type="button" data-auth="login">Ya tengo cuenta</button></div>
+    </form>
+
+    <form id="formForgot" novalidate hidden>
+      <div class="field"><label for="f-email">Correo de tu cuenta</label><input class="f" type="email" id="f-email" autocomplete="username" required></div>
+      <p class="err" id="f-err"></p><p class="ok" id="f-ok"></p>
+      <button class="btn primary" type="submit" id="f-btn">Enviar enlace de recuperación</button>
+      <div class="auth-links"><button class="linkbtn" type="button" data-auth="login">Volver al inicio de sesión</button></div>
+    </form>
+
+    <form id="formRecovery" novalidate hidden>
+      <div class="field"><label for="r-pass">Nueva contraseña (mínimo 8 caracteres)</label><input class="f" type="password" id="r-pass" autocomplete="new-password" minlength="8" required></div>
+      <p class="err" id="r-err"></p>
+      <button class="btn primary" type="submit" id="r-btn">Guardar contraseña</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ Cuenta pendiente ============ -->
+<section class="auth" id="screenPending" hidden>
+  <div class="auth-card">
+    <div class="auth-head"><h1>Cuenta pendiente</h1><p>Tu cuenta <b id="pendingEmail"></b> fue creada, pero un administrador debe aprobarla antes de que puedas entrar.</p></div>
+    <form onsubmit="return false"><button class="btn" type="button" id="btnPendingLogout">Cerrar sesión</button></form>
+  </div>
+</section>
+
+<!-- ============ Aplicación ============ -->
+<div class="app" id="screenApp" hidden>
+  <aside class="side">
+    <div class="brand">
+      <h1>Planes de Trabajo</h1>
+      <span id="syncNote">Conectado</span>
+    </div>
+    <button class="navbtn" id="btnTeam" type="button" aria-current="false"><svg class="icon" aria-hidden="true"><use href="#i-team"/></svg>Equipo de trabajo<span class="pcount mono" id="teamCount"></span></button>
+    <button class="btn primary" id="btnNewProject" type="button"><svg class="icon"><use href="#i-plus"/></svg>Nuevo proyecto</button>
+    <div class="eyebrow">Proyectos</div>
+    <ul class="plist" id="plist"></ul>
+    <div class="session">
+      <div class="session-who"><span class="avatar" id="meAvatar">?</span><div style="min-width:0"><b id="meName"></b><span class="role" id="meRole"></span></div></div>
+      <div class="session-actions"><button class="btn sm" type="button" id="btnMyPass"><svg class="icon"><use href="#i-key"/></svg>Contraseña</button><button class="btn sm" type="button" id="btnLogout">Cerrar sesión</button></div>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="banner" id="banner" hidden></div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<!-- ============ Diálogos ============ -->
+<dialog id="dlgProject">
+  <form class="dlg" id="formProject" novalidate>
+    <div class="dlg-h"><h3 id="dlgProjectTitle">Nuevo proyecto</h3><button class="btn ghost sm" type="button" data-close aria-label="Cerrar"><svg class="icon"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-b">
+      <div class="field full"><label for="p-name">Nombre del proyecto</label><input class="f" id="p-name" required maxlength="120"></div>
+      <div class="field"><label for="p-owner">Responsable</label><input class="f" id="p-owner" maxlength="80"></div>
+      <div class="field"><label for="p-client">Cliente / Área</label><input class="f" id="p-client" maxlength="80"></div>
+      <div class="field"><label for="p-start">Fecha de inicio</label><input class="f" type="date" id="p-start" required></div>
+      <div class="field"><label for="p-end">Fecha de cierre</label><input class="f" type="date" id="p-end" required></div>
+      <div class="field full"><label for="p-desc">Objetivo / descripción</label><textarea class="f" id="p-desc" rows="3" maxlength="1000"></textarea></div>
+      <div class="field full"><label>Color</label><div class="colors" id="p-colors"></div></div>
+      <p class="err" id="p-err"></p>
+    </div>
+    <div class="dlg-f"><button class="btn" type="button" data-close>Cancelar</button><button class="btn primary" type="submit" id="p-save">Guardar proyecto</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgTask">
+  <form class="dlg" id="formTask" novalidate>
+    <div class="dlg-h"><h3 id="dlgTaskTitle">Nueva tarea</h3><button class="btn ghost sm" type="button" data-close aria-label="Cerrar"><svg class="icon"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-b">
+      <div class="field full"><label for="t-title">Tarea</label><input class="f" id="t-title" required maxlength="160"></div>
+      <div class="field"><label for="t-assignee">Colaborador asignado</label><select class="f" id="t-assignee"></select></div>
+      <div class="field"><label for="t-status">Estado</label><select class="f" id="t-status"></select></div>
+      <div class="field"><label for="t-start">Inicio</label><input class="f" type="date" id="t-start" required></div>
+      <div class="field"><label for="t-end">Fin</label><input class="f" type="date" id="t-end" required></div>
+      <div class="field full"><label for="t-notes">Notas</label><textarea class="f" id="t-notes" rows="3" maxlength="1000"></textarea></div>
+      <p class="err" id="t-err"></p>
+    </div>
+    <div class="dlg-f"><button class="btn" type="button" data-close>Cancelar</button><button class="btn primary" type="submit" id="t-save">Guardar tarea</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgUser">
+  <form class="dlg" id="formUser" novalidate>
+    <div class="dlg-h"><h3 id="dlgUserTitle">Nuevo usuario</h3><button class="btn ghost sm" type="button" data-close aria-label="Cerrar"><svg class="icon"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-b">
+      <div class="field full"><label for="u-name">Nombre completo</label><input class="f" id="u-name" required maxlength="80"></div>
+      <div class="field" id="u-email-wrap"><label for="u-email">Correo (usuario de acceso)</label><input class="f" type="email" id="u-email" maxlength="120" autocomplete="off"></div>
+      <div class="field" id="u-pass-wrap"><label for="u-pass">Contraseña temporal</label><input class="f" type="text" id="u-pass" minlength="8" maxlength="72" autocomplete="off"></div>
+      <div class="field"><label for="u-role">Rol</label><select class="f" id="u-role"><option value="colaborador">Colaborador</option><option value="admin">Administrador</option></select></div>
+      <div class="field"><label for="u-cargo">Cargo</label><input class="f" id="u-cargo" maxlength="80"></div>
+      <div class="field"><label for="u-area">Área</label><input class="f" id="u-area" maxlength="80"></div>
+      <div class="field"><label for="u-phone">Teléfono</label><input class="f" type="tel" id="u-phone" maxlength="40"></div>
+      <div class="field full" id="u-active-wrap"><label class="check"><input type="checkbox" id="u-active"> Cuenta activa (puede iniciar sesión y trabajar)</label></div>
+      <p class="err" id="u-err"></p>
+    </div>
+    <div class="dlg-f"><button class="btn" type="button" data-close>Cancelar</button><button class="btn primary" type="submit" id="u-save">Guardar usuario</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgPass">
+  <form class="dlg" id="formPass" novalidate>
+    <div class="dlg-h"><h3 id="dlgPassTitle">Cambiar contraseña</h3><button class="btn ghost sm" type="button" data-close aria-label="Cerrar"><svg class="icon"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-b">
+      <div class="field full"><label for="pw-new">Nueva contraseña (mínimo 8 caracteres)</label><input class="f" type="password" id="pw-new" minlength="8" maxlength="72" autocomplete="new-password"></div>
+      <p class="err" id="pw-err"></p>
+    </div>
+    <div class="dlg-f"><button class="btn" type="button" data-close>Cancelar</button><button class="btn primary" type="submit" id="pw-save">Guardar contraseña</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgConfirm">
+  <div class="dlg">
+    <div class="dlg-h"><h3 id="c-title">Eliminar</h3></div>
+    <div class="dlg-b"><p class="field full" id="c-msg" style="margin:0"></p></div>
+    <div class="dlg-f"><button class="btn" type="button" data-close>Cancelar</button><button class="btn danger solid" type="button" id="c-ok">Eliminar</button></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
